@@ -86,10 +86,17 @@ class consul_template::config (
         order   => '09',
       }
     }
+
+    concat::fragment { 'vault-retries':
+      target  => 'consul-template/config.json',
+      content => inline_template("  grace = \"${::consul_template::vault_grace}\"\n  retry {\n    attempts = \"${::consul_template::vault_retry_attempts}\"\n    backoff = \"${::consul_template::vault_retry_backoff}\"\n    max_backoff = \"${::consul_template::vault_retry_max_backoff}\"\n"),
+      order   => '10',
+    }
+
     concat::fragment { 'vault-baseclose':
       target  => 'consul-template/config.json',
       content => "}\n\n",
-      order   => '10',
+      order   => '11',
     }
   }
 
